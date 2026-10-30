@@ -1,0 +1,21 @@
+{# Bouton « Signaler » : variables attendues : target_type ('wall' ou 'block'), target_id #}
+{% if session.user_id %}
+<details class="report-box">
+    <summary>⚑ Signaler ce {{ 'mur' if target_type == 'wall' else 'bloc' }}</summary>
+    <form method="POST" action="/report" class="report-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="target_type" value="{{ target_type }}">
+        <input type="hidden" name="target_id" value="{{ target_id }}">
+        <select name="reason" required>
+            <option value="" disabled selected>-- Motif du signalement --</option>
+            {% for key, label in report_reasons.items() %}
+            <option value="{{ key }}">{{ label }}</option>
+            {% endfor %}
+        </select>
+        <textarea name="details" rows="3" maxlength="500" placeholder="Précisions (obligatoires si « Autre »)"></textarea>
+        <button type="submit" class="btn-secondary">Envoyer le signalement</button>
+    </form>
+</details>
+{% else %}
+<p class="report-box"><a href="/login?redirect={{ request.path }}">Connectez-vous</a> pour signaler un contenu.</p>
+{% endif %}

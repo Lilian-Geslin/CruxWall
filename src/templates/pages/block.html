@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="block-detail-layout">
+
+    <div class="block-canvas-col">
+        <a href="/wall/{{ block.wall_id }}" class="back-link">← Retour au mur</a>
+        <div class="block-zoom-bar">
+            <button type="button" class="tool-btn zoom-btn" id="blockZoomOut" title="Dézoomer">−</button>
+            <span id="blockZoomLabel" class="zoom-level-label">100%</span>
+            <button type="button" class="tool-btn zoom-btn" id="blockZoomIn" title="Zoomer">+</button>
+            <button type="button" class="tool-btn zoom-btn" id="blockZoomReset" title="Réinitialiser le zoom">⟲</button>
+        </div>
+        <div class="block-viewport" id="blockViewport">
+            <div class="block-image-wrap" id="blockImageWrap">
+                <img src="{{ image_url(block.image_filename) }}"
+                     alt="Mur" id="blockImage" class="block-image">
+                <canvas id="blockCanvas" class="block-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="block-info-col">
+
+        <div class="block-header">
+            <div class="block-badges">
+                {% if block.color %}
+                <span class="color-badge" style="background: {{ block.color }}; {{ 'border: 2px solid #fff;' if block.color == '#111827' else '' }}"></span>
+                {% endif %}
+                <h1 class="block-name">{{ block.name }}</h1>
+            </div>
+            {% if block.grade %}
+            <span class="grade-badge grade-badge-lg">{{ block.grade }}</span>
+            {% endif %}
+        </div>
+
+        <div class="block-meta">
+            <span>Mur : <a href="/wall/{{ block.wall_id }}">{{ block.wall_name }}</a></span>
+            <span>Par {{ block.creator_name or "un compte supprimé" }}</span>
+            <span>{{ holds|length }} prise{{ 's' if holds|length != 1 }}</span>
+        </div>
+
+        {% if block.description %}
+        <div class="block-description">
+            <p>{{ block.description }}</p>
+        </div>
+        {% endif %}
+        {% if block.link %}
+        <p class="block-link"><a href="{{ block.link }}" target="_blank" rel="noopener noreferrer nofollow ugc">🔗 Voir le lien (vidéo, beta…)</a>
+            <span class="block-link-host">{{ block.link|replace('https://','')|replace('http://','')|truncate(50, True) }}</span></p>
+        {% endif %}
+
+        <!-- ASCENSIONS -->
+        <div class="detail-section">
+            <h3 class="detail-section-title">Ascensions</h3>
+            {% if session.user_id %}
+            <div class="ascent-buttons" id="ascentButtons">
+                <button class="ascent-btn" id="btnDone">
+                    <span class="ascent-icon">✓</span> Fait
+                </button>
+                <button class="ascent-btn" id="btnFlash">
+                    <span class="ascent-icon">⚡</span> Flash
+                </button>
+            </div>
+            {% else %}
+            <p class="login-hint"><a href="/login?redirect=/block/{{ block.id }}">Connectez-vous</a> pour enregistrer une ascension.</p>
+            {% endif %}
+            {% if session.user_id %}
+            <form action="/block/{{ block.id }}/favorite" method="POST" class="todo-form inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary fav-btn{{ ' is-fav' if is_fav }}">{{ '★ Bloc favori' if is_fav else '☆ Favori' }}</button>
+            </form>
+            <form action="/block/{{ block.id }}/todo" method="POST" class="todo-form inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary fav-btn{{ ' is-fav' if in_todo }}">{{ '✓ Dans ma liste « à faire »' if in_todo else '+ À faire' }}</button>
+            </form>
+            {% endif %}
+            <div id="ascentList" class="ascent-list"></div>
+        </div>
+
+        <!-- COTATION COMMUNAUTAIRE -->
+        <div class="detail-section">
+            <h3 class="detail-section-title">Cotation communautaire</h3>
+            <p id="noteAverage" class="note-average"></p>
+            {% if session.user_id %}
+            <div class="note-form">
+                <select id="noteSelect">
+                    <option value="">-- Votre cotation --</option>
+                    {% for g in grades %}
+                    <option value="{{ g }}">{{ g }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn-small" id="btnSubmitNote">Valider</button>
+            </div>
+            <p id="noteMessage" class="success-message"></p>
+            {% else %}
+            <p class="login-hint"><a href="/login?redirect=/block/{{ block.id }}">Connectez-vous</a> pour noter.</p>
+            {% endif %}
+            <details class="notes-details">
+                <summary>Voir toutes les cotations</summary>
+                <input type="text" id="noteSearch" class="note-search" placeholder="Chercher un nom...">
+                <div id="notesList" class="notes-list"></div>
+            </details>
+        </div>
+
+        {% with target_type='block', target_id=block.id %}{% include "partials/_report_form.html" %}{% endwith %}
+
+        <!-- Modifier / Supprimer -->
+        {% if session.user_id == block.created_by or session.user_role == 'admin' %}
+        <div class="block-actions">
+            <a href="/block/{{ block.id }}/edit" class="btn-secondary">Modifier le bloc</a>
+            <form action="/block/{{ block.id }}/delete" method="POST"
+                  data-confirm="Supprimer ce bloc définitivement ?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-danger">Supprimer le bloc</button>
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+    window.BLOCK_HOLDS = {{ holds | tojson }};
+    window.BLOCK_COLOR = "{{ block.color or '#3b82f6' }}";
+    window.BLOCK_ID = {{ block.id }};
+    window.GRADES = {{ grades | tojson }};
+    window.BLOCK_GRADE = {{ (block.grade or "") | tojson }};
+    window.IS_LOGGED_IN = {{ 'true' if session.user_id else 'false' }};
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pages/block-view.js') }}"></script>
+{% endblock %}

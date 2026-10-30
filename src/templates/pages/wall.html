@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="wall-detail-layout">
+
+    <!-- COLONNE GAUCHE : Image du mur -->
+    <div class="wall-left">
+        <div class="wall-header">
+            <div>
+                <a href="{{ '/gym/%d' % wall.gym_id if wall.gym_id else '/' }}" class="back-link" data-back>← Retour</a>
+                <div class="title-code-line">
+                    <h1 class="wall-title">{% if wall.is_private %}🔒 {% endif %}{{ wall.name }}</h1>
+                    {% if wall.is_private and (session.user_id == wall.created_by or session.user_role == 'admin') %}
+                    <p class="access-code-box access-code-inline">Code : <strong>{{ wall.access_code }}</strong></p>
+                    {% endif %}
+                </div>
+                <p class="wall-meta-line">
+                    {% if wall.gym_name %}<a href="/gym/{{ wall.gym_id }}">{{ wall.gym_name }}</a> · {% endif %}Créé par {{ wall.creator_name or "un compte supprimé" }}
+                </p>
+                {% with target_type='wall', target_id=wall.id %}{% include "partials/_report_form.html" %}{% endwith %}
+            </div>
+            <div class="wall-actions">
+                {% if session.user_id %}
+                <a href="/wall/{{ wall.id }}/block/new" class="btn-primary">+ Créer un bloc</a>
+                <form action="/wall/{{ wall.id }}/favorite" method="POST" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-secondary fav-btn{{ ' is-fav' if is_fav }}">{{ '★ Favori' if is_fav else '☆ Favori' }}</button>
+                </form>
+                {% endif %}
+                {% if session.user_id == wall.created_by or session.user_role == 'admin' %}
+                <a href="/wall/{{ wall.id }}/edit" class="btn-secondary">Modifier le mur</a>
+                <form action="/wall/{{ wall.id }}/delete" method="POST" data-confirm="Supprimer ce mur et tous ses blocs ?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger">Supprimer le mur</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="wall-image-container" id="wallImageContainer">
+            <img src="{{ image_url(wall.image_filename) }}"
+                 alt="{{ wall.name }}" id="wallImage" class="wall-image">
+        </div>
+    </div>
+
+    <!-- COLONNE DROITE : Liste des blocs -->
+    <div class="wall-right">
+
+        <div id="blocksPanel">
+            <h2 class="blocks-title">{{ blocks|length }} Bloc{{ 's' if blocks|length != 1 }}</h2>
+
+            <div class="grade-filter">
+                <button class="filter-btn active" data-grade="all">Tous</button>
+                <button class="filter-btn" data-grade="facile">Facile (≤5c)</button>
+                <button class="filter-btn" data-grade="inter">Intermédiaire (6a–7a)</button>
+                <button class="filter-btn" data-grade="dur">Dur (≥7a+)</button>
+            </div>
+
+            <div class="sort-buttons">
+                <button class="filter-btn" id="sortEasyToHard">↑ Facile → Dur</button>
+                <button class="filter-btn" id="sortHardToEasy">↓ Dur → Facile</button>
+            </div>
+
+            <div class="blocks-list" id="blocksList">
+                {% for block in blocks %}
+                <div class="block-item" data-block-id="{{ block.id }}" data-grade="{{ block.grade }}">
+                    <div class="block-color-dot" style="background-color: {{ block.color or '#888' }}; {{ 'border: 2px solid #fff;' if block.color == '#111827' else '' }}"></div>
+                    <div class="block-item-info">
+                        <span class="block-item-name">{{ block.name }}</span>
+                        <div class="block-item-meta">
+                            {% if block.grade %}<span class="grade-badge">{{ block.grade }}</span>{% endif %}
+                        </div>
+                    </div>
+                    <span class="block-item-arrow">→</span>
+                </div>
+                {% else %}
+                <p class="no-blocks">Aucun bloc sur ce mur. <a href="/wall/{{ wall.id }}/block/new">Créer le premier →</a></p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pages/wall.js') }}"></script>
+{% endblock %}

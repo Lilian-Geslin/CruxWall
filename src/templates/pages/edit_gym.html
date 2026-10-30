@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>Modifier la salle</h2>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        <form method="POST" action="/gym/{{ gym.id }}/edit">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>Nom de la salle *</label>
+                <input type="text" name="name" required maxlength="100" value="{{ gym.name }}">
+            </div>
+            <div class="form-group">
+                <label>Ville</label>
+                <input type="text" name="location" maxlength="60" value="{{ gym.location or '' }}">
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_private" value="1" {% if gym.is_private %}checked{% endif %}>
+                    Salle privée (ses murs sont cachés sans le code)
+                </label>
+                {% if gym.is_private and gym.access_code %}
+                <p class="access-code-box">Code actuel : <strong>{{ gym.access_code }}</strong></p>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="regenerate_code" value="1"> Générer un nouveau code
+                </label>
+                <small class="form-hint">Les personnes déjà débloquées gardent leur accès.</small>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn-primary btn-full">Enregistrer</button>
+        </form>
+        <p class="auth-switch"><a href="/gym/{{ gym.id }}">← Annuler</a></p>
+    </div>
+</div>
+{% endblock %}

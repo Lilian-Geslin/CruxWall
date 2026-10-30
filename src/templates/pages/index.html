@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-text">
+        <h1>Crée tes blocs.<br>Partage ta<span class="accent"> grimpe.</span></h1>
+        <p>Photographie un mur, sélectionne les prises, crée ton bloc.</p>
+    </div>
+    <div class="search-wrap">
+        <input type="text" id="searchInput" maxlength="100" placeholder="Chercher un mur, une salle..." autocomplete="off">
+        <ul id="searchResults"></ul>
+    </div>
+</section>
+
+{% if session.user_id %}
+<section class="gym-form-section">
+    <details class="gym-form-details">
+        <summary>+ Ajouter une salle</summary>
+        <form action="/gym/new" method="POST" class="gym-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="text" name="name" placeholder="Nom de la salle" required maxlength="100">
+            <input type="text" name="location" placeholder="Ville" maxlength="60">
+            <label class="checkbox-label gym-private-check">
+                <input type="checkbox" name="is_private" value="1"> Salle privée
+            </label>
+            <button type="submit">Créer</button>
+        </form>
+    </details>
+</section>
+{% endif %}
+
+<section class="walls-section">
+    <h2 class="section-title">Derniers murs <a href="/gyms" class="section-link">Voir toutes les salles →</a></h2>
+    {% if walls %}
+    <div class="walls-grid">
+        {% for wall in walls %}
+        <a href="/wall/{{ wall.id }}" class="wall-card">
+            <div class="wall-card-img">
+                <img src="{{ image_url(wall.image_filename) }}" alt="{{ wall.name }}" loading="lazy">
+                <div class="wall-card-overlay">
+                    <span class="block-count">{{ wall.block_count }} bloc{{ 's' if wall.block_count != 1 }}</span>
+                </div>
+            </div>
+            <div class="wall-card-info">
+                <h3>{% if wall.is_private %}🔒 {% endif %}{{ wall.name }}</h3>
+                {% if wall.gym_name %}<p class="gym-tag">{{ wall.gym_name }}</p>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Aucun mur pour l'instant.</p>
+        {% if session.user_id %}
+        <a href="/wall/new" class="btn-primary">Créer le premier mur →</a>
+        {% else %}
+        <a href="/register" class="btn-primary">Commencer →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

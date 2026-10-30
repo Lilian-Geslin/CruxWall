@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="legal-page">
+    <h1>Conditions d'utilisation</h1>
+    <p class="legal-updated">Dernière mise à jour : {{ legal.updated }}</p>
+
+    <h2>1. Objet</h2>
+    <p>CruxWall permet de photographier un mur d'escalade, d'y repérer des prises pour créer des blocs, de les retrouver, d'enregistrer ses ascensions et de proposer des cotations. En créant un compte, vous acceptez les présentes conditions.</p>
+
+    <h2>2. Compte</h2>
+    <ul>
+        <li>Un compte est personnel. Vous êtes responsable de la confidentialité de votre mot de passe.</li>
+        <li>Le pseudo est unique et visible des autres utilisateurs. Il ne doit pas usurper l'identité d'une autre personne ni être injurieux.</li>
+        <li>Vous pouvez supprimer votre compte à tout moment depuis votre profil.</li>
+    </ul>
+
+    <h2>3. Contenus que vous publiez</h2>
+    <ul>
+        <li>Vous ne publiez que des photos que vous avez le droit de publier (prises par vous, ou avec l'accord de leur auteur et de la salle concernée).</li>
+        <li>Les personnes présentes sur une photo ne doivent pas être reconnaissables sans leur accord.</li>
+        <li>Sont interdits : les contenus illégaux, injurieux, haineux, à caractère sexuel, ou révélant des informations personnelles sur autrui.</li>
+        <li>Vous conservez vos droits sur vos contenus. Vous autorisez CruxWall à les afficher sur le site, selon la visibilité que vous avez choisie (public ou privé).</li>
+    </ul>
+
+    <h2>4. Murs et salles privés</h2>
+    <p>Un mur ou une salle privé(e) n'est accessible qu'avec son code. Le créateur décide à qui il le transmet et peut le renouveler à tout moment. CruxWall ne peut pas garantir la confidentialité d'un code que vous avez partagé.</p>
+
+    <h2>5. Modération</h2>
+    <p>Tout utilisateur connecté peut signaler un mur ou un bloc. L'éditeur peut supprimer un contenu, ou un compte, qui ne respecte pas ces conditions, sans préavis lorsque c'est nécessaire.</p>
+
+    <h2>6. Suppression automatique des murs inactifs</h2>
+    <p>Un mur qui n'est ni consulté ni modifié pendant 6 mois est supprimé automatiquement, avec ses blocs, ascensions, cotations et sa photo. Son créateur est averti une semaine avant, dans ses notifications.</p>
+
+    <h2>7. Sécurité sportive</h2>
+    <p>Les blocs et les cotations sont proposés par les utilisateurs. CruxWall ne vérifie ni leur exactitude, ni leur difficulté, ni leur sécurité. L'escalade comporte des risques : vous grimpez sous votre seule responsabilité, avec les protections adaptées et dans le respect des règles de la salle.</p>
+
+    <h2>8. Disponibilité du service</h2>
+    <p>Le service est fourni gratuitement, tel quel, sans garantie de disponibilité continue. Il peut être interrompu, modifié ou arrêté. Des sauvegardes sont réalisées, mais aucune perte de données ne peut être totalement exclue : conservez de votre côté ce qui vous importe.</p>
+
+    <h2>9. Données personnelles</h2>
+    <p>Voir la <a href="/confidentialite">politique de confidentialité</a>.</p>
+
+    <h2>10. Évolution et droit applicable</h2>
+    <p>Ces conditions peuvent évoluer ; la date de mise à jour figure en haut de cette page. Elles sont soumises au droit français.</p>
+
+    <h2>Contact</h2>
+    <p>{% if legal.email %}<a href="mailto:{{ legal.email }}">{{ legal.email }}</a>{% else %}<span class="legal-missing">[À renseigner : variable LEGAL_CONTACT_EMAIL]</span>{% endif %}</p>
+</article>
+{% endblock %}

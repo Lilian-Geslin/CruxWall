@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>Paramètres du compte</h2>
+        {% if ok %}<p class="form-success">{{ ok }}</p>{% endif %}
+        <p class="unlock-text">Pseudo actuel : <strong>{{ user.name }}</strong><br>Email actuel : <strong>{{ user.email }}</strong></p>
+        <p class="unlock-text">Pour chaque modification, saisissez votre mot de passe actuel.</p>
+
+        <form method="POST" action="/profil/settings" class="settings-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="pseudo">
+            <h3>Changer de pseudo</h3>
+            {% if error and error_form == 'pseudo' %}<p class="form-error">{{ error }}</p>{% endif %}
+            <div class="form-group">
+                <label>Nouveau pseudo</label>
+                <input type="text" name="new_pseudo" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_\-]{3,30}" autocapitalize="none" spellcheck="false" value="{{ values.get('new_pseudo', '') if error_form == 'pseudo' else '' }}">
+                <small class="form-hint">Le pseudo est unique. 3 à 30 caractères : lettres (sans accents), chiffres, tiret (-) et underscore (_).</small>
+            </div>
+            <div class="form-group">
+                <label>Mot de passe actuel</label>
+                <input type="password" name="current_password" required autocomplete="current-password" maxlength="128">
+            </div>
+            <button type="submit" class="btn-primary">Changer le pseudo</button>
+        </form>
+
+        <form method="POST" action="/profil/settings" class="settings-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="email">
+            <h3>Changer d'adresse email</h3>
+            {% if error and error_form == 'email' %}<p class="form-error">{{ error }}</p>{% endif %}
+            <div class="form-group">
+                <label>Nouvelle adresse email</label>
+                <input type="email" name="new_email" required maxlength="254" autocomplete="email" value="{{ values.get('new_email', '') if error_form == 'email' else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe actuel</label>
+                <input type="password" name="current_password" required autocomplete="current-password" maxlength="128">
+            </div>
+            <button type="submit" class="btn-primary">Changer l'email</button>
+        </form>
+
+        <form method="POST" action="/profil/settings" class="settings-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="password">
+            <h3>Changer de mot de passe</h3>
+            {% if error and error_form == 'password' %}<p class="form-error">{{ error }}</p>{% endif %}
+            <div class="form-group">
+                <label>Mot de passe actuel</label>
+                <input type="password" name="current_password" required autocomplete="current-password" maxlength="128">
+            </div>
+            <div class="form-group">
+                <label>Nouveau mot de passe</label>
+                <input type="password" name="new_password" required minlength="8" maxlength="128" autocomplete="new-password">
+                <small class="form-hint">8 caractères minimum. Vos autres appareils seront déconnectés.</small>
+            </div>
+            <div class="form-group">
+                <label>Confirmer le nouveau mot de passe</label>
+                <input type="password" name="confirm_password" required minlength="8" maxlength="128" autocomplete="new-password">
+            </div>
+            <button type="submit" class="btn-primary">Changer le mot de passe</button>
+        </form>
+
+        <p class="auth-switch"><a href="/profil">← Retour au profil</a></p>
+    </div>
+</div>
+{% endblock %}

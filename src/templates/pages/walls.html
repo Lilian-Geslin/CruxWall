@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    <h2 class="section-title">Tous les murs</h2>
+
+    {% if walls %}
+    <div class="walls-grid">
+        {% for wall in walls %}
+        <a href="/wall/{{ wall.id }}" class="wall-card">
+            <div class="wall-card-img">
+                <img src="{{ image_url(wall.image_filename) }}" alt="{{ wall.name }}" loading="lazy">
+                <div class="wall-card-overlay">
+                    <span class="block-count">{{ wall.block_count }} bloc{{ 's' if wall.block_count != 1 }}</span>
+                </div>
+            </div>
+            <div class="wall-card-info">
+                <h3>{% if wall.is_private %}🔒 {% endif %}{{ wall.name }}</h3>
+                {% if wall.gym_name %}<p class="gym-tag">{{ wall.gym_name }}</p>{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>Aucun mur pour l'instant.</p>
+        {% if session.user_id %}
+        <a href="/wall/new" class="btn-primary">Créer le premier mur →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

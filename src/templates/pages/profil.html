@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="profil-layout">
+    {% set active_tab = 'profil' %}
+    {% include "partials/_mytabs.html" %}
+
+    <!-- EN-TÊTE PROFIL -->
+    <div class="profil-header">
+        <div class="profil-avatar">{{ user.name[0].upper() }}</div>
+        <div class="profil-info">
+            <h1 class="profil-name">{{ user.name }}</h1>
+            <p class="profil-email">{{ user.email }}</p>
+            <div class="profil-stats">
+                <div class="profil-stat">
+                    <span class="profil-stat-value">{{ created_blocks|length }}</span>
+                    <span class="profil-stat-label">Blocs créés</span>
+                </div>
+                <div class="profil-stat">
+                    <span class="profil-stat-value">{{ climbed_total }}</span>
+                    <span class="profil-stat-label">Blocs grimpés</span>
+                </div>
+                <div class="profil-stat">
+                    <span class="profil-stat-value">{{ climbed_flash }}</span>
+                    <span class="profil-stat-label">Flashs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profil-body">
+
+        {% if notifications %}
+        <section class="profil-section">
+            <h2 class="profil-section-title">Notifications</h2>
+            <div class="notif-list">
+                {% for n in notifications %}
+                <div class="notif-entry {{ 'notif-unread' if not n.read_at else '' }}">
+                    {% if n.wall_id %}
+                    <a href="/wall/{{ n.wall_id }}" class="notif-message">{{ n.message }}</a>
+                    {% else %}
+                    <span class="notif-message">{{ n.message }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- BLOCS GRIMPÉS PAR MUR -->
+        <section class="profil-section">
+            <h2 class="profil-section-title">Mes ascensions</h2>
+            {% if ascents_by_wall %}
+                {% for wall_name, data in ascents_by_wall.items() %}
+                <div class="profil-wall-group">
+                    <a href="/wall/{{ data.wall_id }}" class="profil-wall-name">{{ wall_name }}</a>
+                    <div class="profil-blocks-grid">
+                        {% for b in data.blocks %}
+                        <a href="/block/{{ b.block_id }}" class="profil-block-card">
+                            <div class="profil-block-dot" style="background: {{ b.color or '#888' }}; {{ 'border: 2px solid #fff;' if b.color == '#111827' else '' }}"></div>
+                            <div class="profil-block-info">
+                                <span class="profil-block-name">{{ b.block_name }}</span>
+                                <div class="profil-block-tags">
+                                    {% if b.grade %}<span class="grade-badge">{{ b.grade }}</span>{% endif %}
+                                    {% if b.flash %}<span class="flash-badge">⚡ Flash</span>{% else %}<span class="done-badge">✓ Fait</span>{% endif %}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p class="profil-empty">Vous n'avez encore grimpé aucun bloc. Allez sur un mur et cochez vos ascensions !</p>
+            {% endif %}
+        </section>
+
+        <!-- MURS CRÉÉS -->
+        <section class="profil-section">
+            <h2 class="profil-section-title">Mes murs créés</h2>
+            {% if created_walls %}
+            <div class="profil-blocks-grid">
+                {% for w in created_walls %}
+                <div class="profil-wall-card">
+                    <a href="/wall/{{ w.id }}" class="profil-block-card">
+                        <div class="wall-card-thumb" style="background-image: url('{{ image_url(w.image_filename) }}')"></div>
+                        <div class="profil-block-info">
+                            <span class="profil-block-name">{{ w.name }}</span>
+                            <div class="profil-block-tags">
+                                <span class="wall-tag-small">{{ w.block_count }} bloc{{ 's' if w.block_count != 1 }}</span>
+                                {% if w.gym_name %}<span class="wall-tag-small">{{ w.gym_name }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <form action="/wall/{{ w.id }}/delete" method="POST"
+                          data-confirm="Supprimer le mur « {{ w.name }} » et tous ses blocs définitivement ?"
+                          class="profil-wall-delete">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-danger btn-danger-small">Supprimer</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="profil-empty">Vous n'avez encore créé aucun mur.</p>
+            {% endif %}
+        </section>
+
+        <!-- BLOCS CRÉÉS -->
+        <section class="profil-section">
+            <h2 class="profil-section-title">Mes blocs créés</h2>
+            {% if created_blocks %}
+            <div class="profil-blocks-grid">
+                {% for b in created_blocks %}
+                <a href="/block/{{ b.id }}" class="profil-block-card">
+                    <div class="profil-block-dot" style="background: {{ b.color or '#888' }}; {{ 'border: 2px solid #fff;' if b.color == '#111827' else '' }}"></div>
+                    <div class="profil-block-info">
+                        <span class="profil-block-name">{{ b.name }}</span>
+                        <div class="profil-block-tags">
+                            {% if b.grade %}<span class="grade-badge">{{ b.grade }}</span>{% endif %}
+                            <span class="wall-tag-small">{{ b.wall_name }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="profil-empty">Vous n'avez encore créé aucun bloc.</p>
+            {% endif %}
+        </section>
+
+        <section class="account-box">
+            <h2>Mes données</h2>
+            <p>Vous pouvez télécharger tout ce que CruxWall conserve sur vous, ou supprimer votre compte.</p>
+            <div class="account-actions">
+                <a href="/profil/settings" class="btn-secondary">Modifier pseudo, email, mot de passe</a>
+                <a href="/profil/export" class="btn-secondary">Télécharger mes données</a>
+                <a href="/profil/delete" class="btn-danger">Supprimer mon compte</a>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

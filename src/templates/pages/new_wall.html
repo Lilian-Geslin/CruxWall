@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>Nouveau mur</h2>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        <form method="POST" action="/wall/new" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>Nom du mur *</label>
+                <input type="text" name="name" required maxlength="100" placeholder="Ex: Dévers orange, Dalle centrale...">
+            </div>
+            <div class="form-group">
+                <label>Salle *</label>
+                <select name="gym_id" id="gymSelect" required {% if not gyms %}style="display:none;"{% endif %}>
+                    <option value="" disabled {% if not preselected_gym %}selected{% endif %}>-- Choisir une salle --</option>
+                    {% for gym in gyms %}
+                    <option value="{{ gym.id }}" {% if preselected_gym|string == gym.id|string %}selected{% endif %}>{{ gym.name }}{% if gym.location %} ({{ gym.location }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+                {% if not gyms %}
+                <p class="form-hint">Aucune salle n'existe encore — créez-en une ci-dessous, sans perdre ce formulaire.</p>
+                {% endif %}
+
+                <details class="quick-gym-details" id="quickGymDetails" {% if not gyms %}open{% endif %}>
+                    <summary>+ Créer une nouvelle salle</summary>
+                    <div class="quick-gym-form">
+                        <input type="text" id="quickGymName" maxlength="100" placeholder="Nom de la salle">
+                        <input type="text" id="quickGymLocation" maxlength="60" placeholder="Ville">
+                        <label class="checkbox-label gym-private-check">
+                            <input type="checkbox" id="quickGymPrivate"> Salle privée
+                        </label>
+                        <button type="button" class="btn-small" id="quickGymSubmit">Créer la salle</button>
+                        <p id="quickGymMessage" class="quick-gym-message"></p>
+                    </div>
+                </details>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_private" value="1">
+                    Mur privé (accessible uniquement avec un code)
+                </label>
+                <small class="form-hint">Un code d'accès sera généré, à partager aux personnes de votre choix.</small>
+            </div>
+            <div class="form-group">
+                <label>Photo du mur *</label>
+                <div class="file-drop" id="fileDrop">
+                    <input type="file" name="image" id="imageInput" accept="image/*" required>
+                    <div class="file-drop-label" id="fileDropLabel">
+                        <span>📷</span>
+                        <p>Cliquer ou déposer une photo</p>
+                        <small>JPG, PNG, WEBP</small>
+                    </div>
+                    <img id="imagePreview" class="image-preview" style="display:none;">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary btn-full">Créer le mur →</button>
+        </form>
+        <p class="auth-switch"><a href="/">← Retour</a></p>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+    const input = document.getElementById("imageInput");
+    const preview = document.getElementById("imagePreview");
+    const label = document.getElementById("fileDropLabel");
+    input.addEventListener("change", () => {
+        const file = input.files[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            preview.src = url;
+            preview.style.display = "block";
+            label.style.display = "none";
+        }
+    });
+
+    // Création d'une salle sans quitter la page (ni perdre nom/photo déjà saisis)
+    document.getElementById("quickGymSubmit")?.addEventListener("click", async () => {
+        const nameEl = document.getElementById("quickGymName");
+        const locEl = document.getElementById("quickGymLocation");
+        const privEl = document.getElementById("quickGymPrivate");
+        const msgEl = document.getElementById("quickGymMessage");
+        const name = nameEl.value.trim();
+        if (!name) {
+            msgEl.textContent = "Le nom de la salle est requis.";
+            msgEl.className = "quick-gym-message quick-gym-error";
+            return;
+        }
+
+        const body = new URLSearchParams();
+        body.set("name", name);
+        body.set("location", locEl.value.trim());
+        if (privEl.checked) body.set("is_private", "1");
+
+        try {
+            const res = await fetch("/api/gym/quick_create", {
+                method: "POST",
+                headers: { "X-CSRF-Token": window.csrfToken() },
+                body
+            });
+            const data = await res.json();
+            if (!data.success) {
+                msgEl.textContent = data.error || "Erreur lors de la création.";
+                msgEl.className = "quick-gym-message quick-gym-error";
+                return;
+            }
+
+            // Ajoute la nouvelle salle dans le menu déroulant et la sélectionne
+            const select = document.getElementById("gymSelect");
+            select.style.display = "";
+            const opt = document.createElement("option");
+            opt.value = data.id;
+            opt.textContent = data.name + (data.location ? ` (${data.location})` : "");
+            opt.selected = true;
+            select.appendChild(opt);
+
+            msgEl.textContent = data.access_code
+                ? `Salle créée ✓ (code d'accès : ${data.access_code})`
+                : "Salle créée ✓";
+            msgEl.className = "quick-gym-message quick-gym-success";
+            nameEl.value = ""; locEl.value = ""; privEl.checked = false;
+            document.getElementById("quickGymDetails").removeAttribute("open");
+        } catch (err) {
+            msgEl.textContent = "Erreur réseau.";
+            msgEl.className = "quick-gym-message quick-gym-error";
+        }
+    });
+</script>
+{% endblock %}

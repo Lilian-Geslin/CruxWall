@@ -1,0 +1,203 @@
+/* =============================================
+   EDITOR
+   ============================================= */
+
+.editor-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    height: calc(100vh - 58px);
+    overflow: hidden;
+}
+
+.editor-canvas-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+}
+.tool-btn:hover { border-color: var(--text-muted); }
+.tool-btn.active { background: var(--bg3); border-color: var(--accent); color: var(--accent); }
+.tool-btn-erase { color: var(--red); border-color: var(--red); }
+.tool-btn-erase.active { background: var(--red); color: #fff; border-color: var(--red); }
+.tool-btn-undo { color: var(--text-muted); }
+
+.tool-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid rgba(255,255,255,0.3);
+}
+.tool-dot.start { background: #22c55e; }
+.tool-dot.mid   { background: #3b82f6; }
+.tool-dot.top   { background: #ef4444; }
+.tool-dot.foot  { background: #eab308; }
+
+.canvas-viewport {
+    position: relative;
+    flex: 1;
+    overflow: auto;
+    border-radius: var(--radius);
+    background: var(--bg2);
+}
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    /* width/height passent à plus de 100% via JS quand on zoome ; le
+       viewport parent (overflow:auto) permet alors de défiler dedans.
+       Curseur "main" façon logiciels de dessin : un tap immobile pose une
+       prise, un glisser déplace l'image (voir editor.js). */
+}
+.canvas-wrapper:active {
+    cursor: grabbing;
+}
+.editor-canvas {
+    touch-action: none; /* tout le geste tactile passe par notre JS, pas le zoom natif du navigateur */
+}
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+}
+.zoom-btn {
+    padding: 8px 12px;
+    font-weight: 700;
+    min-width: 36px;
+    justify-content: center;
+}
+.zoom-level-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 42px;
+    text-align: center;
+}
+.editor-image {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+}
+.editor-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+}
+
+.holds-legend {
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.holds-legend span { display: flex; align-items: center; gap: 5px; }
+
+/* PANNEAU FORMULAIRE */
+.editor-form-panel {
+    border-left: 1px solid var(--border);
+    padding: 24px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.editor-form-panel::-webkit-scrollbar { width: 4px; }
+.editor-form-panel::-webkit-scrollbar-thumb { background: var(--border); }
+
+.editor-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 1px;
+}
+.editor-wall-name { font-size: 13px; color: var(--text-muted); }
+
+.holds-counter {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+.holds-counter span { font-size: 20px; font-weight: 700; color: var(--accent); }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 10px 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--accent); }
+.form-group select option { background: var(--bg2); }
+
+/* Color picker */
+.color-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.color-opt { cursor: pointer; }
+.color-opt input { display: none; }
+.color-swatch {
+    display: block;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    transition: border-color 0.15s, transform 0.15s;
+}
+.color-opt input:checked + .color-swatch {
+    border-color: var(--text);
+    transform: scale(1.2);
+}
+.color-swatch:hover { transform: scale(1.1); }
+
+.form-error {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid var(--red);
+    color: var(--red);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+}
+
+.btn-save { align-self: flex-start; }

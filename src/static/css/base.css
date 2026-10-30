@@ -1,0 +1,80 @@
+/* Polices hébergées sur ce site (licence SIL OFL, voir static/fonts/) : aucun appel à Google. */
+@font-face {
+    font-family: 'Bebas Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/bebas-neue-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('../fonts/dm-sans-latin-300-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/dm-sans-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/dm-sans-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/dm-sans-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 300;
+    font-display: swap;
+    src: url('../fonts/dm-sans-latin-300-italic.woff2') format('woff2');
+}
+
+/* =============================================
+   CRUXWALL — CSS
+   Aesthetic: Industrial climbing, dark & sharp
+   ============================================= */
+
+:root {
+    --bg:        #0f0f0f;
+    --bg2:       #1a1a1a;
+    --bg3:       #252525;
+    --border:    #2e2e2e;
+    --text:      #f0f0f0;
+    --text-muted:#888;
+    --accent:    #7fa885;   /* vert sauge */
+    --accent2:   #a8c5ab;   /* vert sauge clair */
+    --green:     #22c55e;
+    --red:       #ef4444;
+    --radius:    8px;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }

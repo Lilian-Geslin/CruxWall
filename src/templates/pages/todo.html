@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    {% include "partials/_mytabs.html" %}
+    <h2 class="section-title">Blocs à faire ({{ todo|length }})</h2>
+    {% if todo %}
+    <div class="fav-list">
+        {% for b in todo %}
+        <div class="fav-row">
+            <span class="color-badge" style="background: {{ b.color or '#3b82f6' }}"></span>
+            <a href="/block/{{ b.id }}">{{ b.name }}</a>
+            {% if b.grade %}<span class="grade-badge">{{ b.grade }}</span>{% endif %}
+            <span class="admin-meta">{{ b.wall_name }}</span>
+            <form method="POST" action="/block/{{ b.id }}/todo"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary">Retirer</button></form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}<p class="profil-empty">Rien à faire pour l'instant. Sur la page d'un bloc, appuyez sur « + À faire ».</p>{% endif %}
+</section>
+{% endblock %}

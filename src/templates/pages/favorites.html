@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    {% include "partials/_mytabs.html" %}
+    <h2 class="section-title">Salles favorites ({{ gyms|length }})</h2>
+    {% if gyms %}
+    <div class="fav-list">
+        {% for g in gyms %}
+        <div class="fav-row">
+            <a href="/gym/{{ g.id }}">{% if g.is_private %}🔒 {% endif %}{{ g.name }}</a>
+            <span class="admin-meta">{{ g.location or "" }} · {{ g.wall_count }} mur{{ 's' if g.wall_count != 1 }}</span>
+            <form method="POST" action="/gym/{{ g.id }}/favorite"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary">Retirer</button></form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}<p class="profil-empty">Aucune salle en favori. Ouvrez une salle et appuyez sur « ☆ Favori ».</p>{% endif %}
+
+    <h2 class="section-title">Blocs favoris ({{ blocks|length }})</h2>
+    {% if blocks %}
+    <div class="fav-list">
+        {% for b in blocks %}
+        <div class="fav-row">
+            <span class="color-badge" style="background: {{ b.color or '#3b82f6' }}"></span>
+            <a href="/block/{{ b.id }}">{{ b.name }}</a>
+            {% if b.grade %}<span class="grade-badge">{{ b.grade }}</span>{% endif %}
+            <span class="admin-meta">{{ b.wall_name }}</span>
+            <form method="POST" action="/block/{{ b.id }}/favorite"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary">Retirer</button></form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}<p class="profil-empty">Aucun bloc en favori. Ouvrez un bloc et appuyez sur « ☆ Favori ».</p>{% endif %}
+
+    <h2 class="section-title">Murs favoris ({{ walls|length }})</h2>
+    {% if walls %}
+    <div class="walls-grid">
+        {% for wall in walls %}
+        <a href="/wall/{{ wall.id }}" class="wall-card">
+            <div class="wall-card-img"><img src="{{ image_url(wall.image_filename) }}" alt="{{ wall.name }}" loading="lazy"></div>
+            <div class="wall-card-info">
+                <h3>{% if wall.is_private %}🔒 {% endif %}{{ wall.name }}</h3>
+                <p>{{ wall.gym_name or "" }} · {{ wall.block_count }} bloc{{ 's' if wall.block_count != 1 }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}<p class="profil-empty">Aucun mur en favori. Ouvrez un mur et appuyez sur « ☆ Favori ».</p>{% endif %}
+</section>
+{% endblock %}

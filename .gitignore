@@ -1,0 +1,14 @@
+.env
+cruxwall.db
+cruxwall.db-journal
+uploads/
+src/static/uploads/
+backups/
+best.pt
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/

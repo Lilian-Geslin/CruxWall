@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>Modifier le bloc</h2>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        <form method="POST" action="/block/{{ block.id }}/edit">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>Nom du bloc *</label>
+                <input type="text" name="name" required maxlength="100" value="{{ block.name }}">
+            </div>
+            <div class="form-group">
+                <label>Cotation</label>
+                <select name="grade">
+                    <option value="">-- Non définie --</option>
+                    {% for g in grades %}
+                    <option value="{{ g }}" {% if block.grade == g %}selected{% endif %}>{{ g }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Couleur du bloc</label>
+                <div class="color-picker">
+                    {% set colors = [
+                        ('#eab308','Jaune'), ('#22c55e','Vert'), ('#3b82f6','Bleu'),
+                        ('#8b5cf6','Violet'), ('#ef4444','Rouge'), ('#ffffff','Blanc'),
+                        ('#111827','Noir')
+                    ] %}
+                    {% for hex, cname in colors %}
+                    <label class="color-opt" title="{{ cname }}">
+                        <input type="radio" name="color" value="{{ hex }}" {% if block.color == hex %}checked{% endif %}>
+                        <span class="color-swatch" style="background:{{ hex }}"></span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description (optionnel)</label>
+                <textarea name="description" rows="3" maxlength="500">{{ block.description or '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Lien (optionnel)</label>
+                <input type="url" name="link" maxlength="300" value="{{ block.link or '' }}" placeholder="https://… (vidéo, beta)">
+            </div>
+            <button type="submit" class="btn-primary btn-full">Enregistrer</button>
+        </form>
+        <p class="auth-switch"><a href="/block/{{ block.id }}">← Annuler</a></p>
+    </div>
+</div>
+{% endblock %}

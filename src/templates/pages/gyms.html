@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    <h2 class="section-title">Toutes les salles</h2>
+
+    {% if session.user_id %}
+    <details class="gym-form-details gym-form-inline">
+        <summary>+ Ajouter une salle</summary>
+        <form action="/gym/new" method="POST" class="gym-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="text" name="name" placeholder="Nom de la salle" required maxlength="100">
+            <input type="text" name="location" placeholder="Ville" maxlength="60">
+            <label class="checkbox-label gym-private-check">
+                <input type="checkbox" name="is_private" value="1"> Salle privée
+            </label>
+            <button type="submit">Créer</button>
+        </form>
+    </details>
+    {% endif %}
+
+    {% if gyms %}
+    <div class="gyms-grid">
+        {% for g in gyms %}
+        <div class="gym-card">
+            <a href="/gym/{{ g.id }}" class="gym-card-main">
+                <h3>{% if g.is_private %}🔒 {% endif %}{{ g.name }}</h3>
+                {% if g.location %}<p class="gym-card-loc">{{ g.location }}</p>{% endif %}
+                <p class="gym-card-count">
+                    {% if g.can_view %}{{ g.wall_count }} mur{{ 's' if g.wall_count != 1 }}
+                    {% else %}Contenu privé{% endif %}
+                </p>
+            </a>
+            {% if session.user_id and (session.user_id == g.created_by or session.user_role == 'admin') %}
+            <div class="gym-card-actions">
+                <a href="/gym/{{ g.id }}/edit" class="btn-secondary btn-small-link">Modifier</a>
+                <form action="/gym/{{ g.id }}/delete" method="POST"
+                      data-confirm="⚠️ Supprimer définitivement la salle « {{ g.name }} » et tous les murs qu'elle contient (blocs, prises, notes, ascensions, photos compris) ? Action irréversible.">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger btn-danger-small">Supprimer</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>Aucune salle pour l'instant.</p></div>
+    {% endif %}
+</section>
+{% endblock %}

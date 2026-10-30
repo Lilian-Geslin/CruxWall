@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="legal-page">
+    <h1>Mentions légales</h1>
+    <p class="legal-updated">Dernière mise à jour : {{ legal.updated }}</p>
+
+    <h2>Éditeur du site</h2>
+    <p>
+        {% if legal.publisher %}{{ legal.publisher }}{% else %}<span class="legal-missing">[À renseigner : variable LEGAL_PUBLISHER_NAME]</span>{% endif %}
+        {% if legal.publisher_address %}<br>{{ legal.publisher_address }}{% endif %}
+    </p>
+    <p>CruxWall est un site personnel, non commercial, sans publicité.</p>
+
+    <h2>Contact</h2>
+    <p>
+        {% if legal.email %}<a href="mailto:{{ legal.email }}">{{ legal.email }}</a>{% else %}<span class="legal-missing">[À renseigner : variable LEGAL_CONTACT_EMAIL]</span>{% endif %}
+    </p>
+    <p>Pour signaler un contenu (photo, bloc, mur), utilisez le bouton « Signaler » présent sur chaque page de mur et de bloc, ou écrivez à cette adresse en indiquant l'adresse de la page concernée.</p>
+
+    <h2>Hébergement</h2>
+    <p>{{ legal.host }}</p>
+
+    <h2>Propriété et contenus</h2>
+    <p>Les photos, murs, blocs, cotations et ascensions sont publiés par les utilisateurs, qui en sont responsables (voir les <a href="/cgu">conditions d'utilisation</a>). Les polices utilisées (Bebas Neue, DM Sans) sont distribuées sous licence SIL Open Font License.</p>
+
+    <h2>Données personnelles</h2>
+    <p>Voir la <a href="/confidentialite">politique de confidentialité</a>.</p>
+</article>
+{% endblock %}

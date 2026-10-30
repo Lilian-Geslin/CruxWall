@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    <a href="/gyms" class="back-link">← Toutes les salles</a>
+    <div class="gym-header">
+        <div>
+            <div class="title-code-line">
+                <h1 class="wall-title">{% if gym.is_private %}🔒 {% endif %}{{ gym.name }}</h1>
+                {% if gym.is_private and (session.user_id == gym.created_by or session.user_role == 'admin') %}
+                <p class="access-code-box access-code-inline">Code : <strong>{{ gym.access_code }}</strong></p>
+                {% endif %}
+            </div>
+            <p class="wall-meta-line">
+                {% if gym.location %}{{ gym.location }}{% endif %}
+                {% if gym.creator_name %}{% if gym.location %} · {% endif %}Créée par {{ gym.creator_name }}{% endif %}
+            </p>
+        </div>
+        <div class="wall-actions">
+            <form action="/gym/{{ gym.id }}" method="GET" class="gym-search-form" role="search">
+                <input type="search" name="q" value="{{ q or '' }}" maxlength="100" class="gym-search-input" id="gymSearch"
+                       data-suggest-url="/gym/{{ gym.id }}/suggest" autocomplete="off"
+                       placeholder="Mur, bloc, cotation, ouvreur…" aria-label="Rechercher dans la salle">
+                {% if q %}<a href="/gym/{{ gym.id }}" class="btn-link-small" title="Effacer la recherche">✕</a>{% endif %}
+                <ul class="suggest-list" id="gymSuggest" hidden></ul>
+            </form>
+            {% if session.user_id %}
+            <a href="/wall/new?gym_id={{ gym.id }}" class="btn-primary">+ Nouveau mur ici</a>
+            <form action="/gym/{{ gym.id }}/favorite" method="POST" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary fav-btn{{ ' is-fav' if is_fav }}">{{ '★ Favori' if is_fav else '☆ Favori' }}</button>
+            </form>
+            {% endif %}
+            {% if session.user_id and (session.user_id == gym.created_by or session.user_role == 'admin') %}
+            <a href="/gym/{{ gym.id }}/edit" class="btn-secondary">Modifier la salle</a>
+            <form action="/gym/{{ gym.id }}/delete" method="POST"
+                  data-confirm="⚠️ Supprimer définitivement cette salle et tous les murs qu'elle contient (blocs, prises, notes, ascensions, photos compris) ? Action irréversible.">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-danger">Supprimer la salle</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if q and search_blocks is not none %}
+    <p class="search-summary">Résultats pour « {{ q }} » dans cette salle</p>
+    <h2 class="section-title">{{ search_blocks|length }} bloc{{ 's' if search_blocks|length != 1 }}</h2>
+    {% if search_blocks %}
+    <div class="blocks-list">
+        {% for b in search_blocks %}
+        <a href="/block/{{ b.id }}" class="block-item">
+            <div class="block-color-dot" style="background-color: {{ b.color or '#888' }}; {{ 'border: 2px solid #fff;' if b.color == '#111827' else '' }}"></div>
+            <div class="block-item-info">
+                <span class="block-item-name">{{ b.name }}</span>
+                <div class="block-item-meta">
+                    {% if b.grade %}<span class="grade-badge">{{ b.grade }}</span>{% endif %}
+                    <span class="block-item-sub">{{ b.wall_name }} · par {{ b.creator_name or "un compte supprimé" }}</span>
+                </div>
+            </div>
+            <span class="block-item-arrow">→</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>Aucun bloc ne correspond.</p></div>
+    {% endif %}
+    {% endif %}
+
+    <h2 class="section-title">{{ walls|length }} mur{{ 's' if walls|length != 1 }}</h2>
+    {% if walls %}
+    <div class="walls-grid">
+        {% for wall in walls %}
+        <a href="/wall/{{ wall.id }}" class="wall-card">
+            <div class="wall-card-img">
+                <img src="{{ image_url(wall.image_filename) }}" alt="{{ wall.name }}" loading="lazy">
+                <div class="wall-card-overlay">
+                    <span class="block-count">{{ wall.block_count }} bloc{{ 's' if wall.block_count != 1 }}</span>
+                </div>
+            </div>
+            <div class="wall-card-info">
+                <h3>{% if wall.is_private %}🔒 {% endif %}{{ wall.name }}</h3>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>{{ "Aucun mur ne correspond." if q else "Aucun mur visible dans cette salle pour l'instant." }}</p></div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,58 @@
+/* =============================================
+   MENU MOBILE (bouton ☰ : tous les liens dans un panneau)
+   ============================================= */
+.nav-toggle { display: none; }
+.nav-cta-mobile { display: none; }
+
+@media (max-width: 860px) {
+    .site-header { gap: 10px; }
+    .logo { margin-right: auto; }
+    .nav-cta-mobile { display: inline-block; padding: 6px 12px; font-size: 13px; }
+    .nav-cta-desktop { display: none; }
+    .nav-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 42px;
+        height: 42px;
+        padding: 0 10px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+    }
+    .nav-toggle span { display: block; height: 2px; background: var(--text); border-radius: 2px; }
+    .header-nav {
+        display: none;
+        position: absolute;
+        top: 58px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px 16px 14px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+    }
+    .header-nav.open { display: flex; }
+    .header-nav .nav-link,
+    .header-nav button.nav-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 13px 4px;
+        font-size: 16px;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        background: none;
+    }
+    .header-nav .nav-cta { background: var(--accent); border-radius: var(--radius); margin-top: 10px; justify-content: center; border-bottom: none; }
+    .header-nav .nav-cta-desktop { display: none; }   /* « + Mur » est déjà à côté du bouton ☰ */
+    .header-nav .logout-form { width: 100%; }
+    .header-nav button.logout { border-bottom: none; color: var(--text-muted); }
+}

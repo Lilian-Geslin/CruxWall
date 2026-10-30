@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>{{ title }}</h2>
+        {% for line in lines %}<p class="unlock-text">{{ line }}</p>{% endfor %}
+        <a href="{{ back_url or '/' }}" class="btn-primary btn-full">{{ back_label or "← Retour à l'accueil" }}</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Créer un compte</h2>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        <form method="POST" action="/register">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="form_ts" value="{{ new_form_token() }}">
+            <div class="hp-field" aria-hidden="true"><label>Ne pas remplir <input type="text" name="company_url" tabindex="-1" autocomplete="off"></label></div>
+            <div class="form-group">
+                <label>Pseudo</label>
+                <input type="text" name="name" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_\-]{3,30}" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Ton pseudo (unique)" value="{{ form_name or '' }}">
+                <small class="form-hint">Ce pseudo est unique. 3 à 30 caractères : lettres (sans accents), chiffres, tiret (-) et underscore (_).</small>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required maxlength="254" autocomplete="email" placeholder="ton@email.com" value="{{ form_email or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" name="password" required placeholder="••••••••" minlength="8" maxlength="128" autocomplete="new-password">
+                <small class="form-hint">8 caractères minimum.</small>
+            </div>
+            <label class="terms-check">
+                <input type="checkbox" name="accept_terms" value="1" required>
+                <span>J'ai lu et j'accepte les <a href="/cgu" target="_blank" rel="noopener">conditions d'utilisation</a> et la <a href="/confidentialite" target="_blank" rel="noopener">politique de confidentialité</a>.</span>
+            </label>
+            <button type="submit" class="btn-primary btn-full">S'inscrire</button>
+        </form>
+        <p class="auth-switch">Déjà un compte ? <a href="/login">Se connecter</a></p>
+    </div>
+</div>
+{% endblock %}

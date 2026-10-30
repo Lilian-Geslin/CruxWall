@@ -1,0 +1,51 @@
+/* =============================================
+   RESPONSIVE — tablette
+   ============================================= */
+
+@media (max-width: 900px) {
+    .wall-detail-layout,
+    .editor-layout,
+    .block-detail-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+
+    .wall-image-container,
+    .block-image-wrap {
+        height: 55vw;
+        min-height: 260px;
+    }
+
+    /* Éditeur : c'est le cadre (viewport) qui a la hauteur fixe, pas
+       l'image zoomable à l'intérieur — sinon les % du zoom n'ont pas de
+       référence sur téléphone. */
+    .canvas-viewport {
+        flex: none;
+        height: 55vw;
+        min-height: 260px;
+    }
+
+    .wall-right,
+    .editor-form-panel,
+    .block-info-col {
+        border-left: none;
+        border-top: 1px solid var(--border);
+        max-height: none;
+    }
+
+    .wall-left,
+    .editor-canvas-panel,
+    .block-canvas-col {
+        height: auto;
+    }
+
+    .site-header { padding: 0 16px; }
+    .hero { padding: 48px 16px 32px; }
+    .walls-section { padding: 0 16px 48px; }
+}
+
+@media (max-width: 600px) {
+    .wall-header { flex-direction: column; gap: 12px; }
+    .wall-actions { align-items: flex-start; }
+}

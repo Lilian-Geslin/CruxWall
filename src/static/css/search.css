@@ -1,0 +1,26 @@
+/* Recherche dans une salle, propositions, liens et noms longs. */
+
+/* Recherche dans une salle, lien de bloc */
+.gym-search-form { display: flex; gap: 6px; align-items: center; flex: 1 1 220px; }
+.gym-search-input { flex: 1; min-width: 0; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border, #333); background: var(--bg2, #1a1a1a); color: inherit; }
+.search-summary { color: var(--text-muted); margin: 8px 0 0; }
+.block-item-sub { color: var(--text-muted); font-size: 0.85em; margin-left: 6px; }
+a.block-item { text-decoration: none; color: inherit; }
+.block-link { margin: 10px 0; }
+.block-link a { font-weight: 600; }
+.block-link-host { display: block; font-size: 0.8em; color: var(--text-muted); word-break: break-all; }
+
+/* Propositions de la recherche de salle */
+.gym-search-form { position: relative; }
+.suggest-list { position: absolute; top: 100%; left: 0; right: 0; z-index: 50; margin: 4px 0 0; padding: 4px; list-style: none;
+    background: var(--bg2, #1a1a1a); border: 1px solid var(--border, #333); border-radius: 10px; max-height: min(60vh, 360px); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+    box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.suggest-list[hidden] { display: none; }
+.suggest-title { padding: 6px 10px 2px; font-size: .75em; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+.suggest-list a { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding: 8px 10px; border-radius: 8px; color: inherit; text-decoration: none; }
+.suggest-list a:hover, .suggest-list a.active { background: var(--bg3, #2a2a2a); }
+.suggest-main { font-weight: 600; }
+.suggest-sub { color: var(--text-muted); font-size: .85em; flex-basis: 100%; }
+
+/* Noms longs (jusqu'à 100 caractères) : retour à la ligne plutôt que débordement */
+.suggest-main, .wall-card-info h3, .block-item-name, .wall-title, .block-name, .gym-header h1 { overflow-wrap: anywhere; }

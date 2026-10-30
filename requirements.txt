@@ -1,0 +1,14 @@
+# Dépendances complètes (PC / tablette). Mêmes versions épinglées que
+# requirements-pythonanywhere.txt, plus la détection IA locale.
+Flask==3.1.3
+Werkzeug==3.1.9
+python-dotenv==1.2.4
+Pillow==12.3.0
+Jinja2==3.1.6
+MarkupSafe==3.0.4
+itsdangerous==2.2.0
+click==8.5.0
+blinker==1.9.0
+# ultralytics tire torch et beaucoup d'autres paquets : après installation,
+# lance "pip freeze | grep -i -E 'ultralytics|torch'" et épingle ces versions ici.
+ultralytics

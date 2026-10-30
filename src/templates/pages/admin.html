@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-page">
+    <h1>Administration</h1>
+    <p class="admin-stats">{{ stats.users }} comptes · {{ stats.gyms }} salles · {{ stats.walls }} murs · {{ stats.blocks }} blocs</p>
+
+    <h2>Signalements à traiter ({{ open_reports|length }})</h2>
+    {% for r in open_reports %}
+    <div class="admin-card">
+        <div class="admin-card-head">
+            <span><span class="admin-reason">{{ report_reasons.get(r.reason, r.reason) }}</span> — {{ 'mur' if r.target_type == 'wall' else 'bloc' }}
+                {% if r.target_exists %}<a href="{{ r.target_url }}" target="_blank" rel="noopener">« {{ r.target_name }} »</a>{% else %}« {{ r.target_name }} » (déjà supprimé){% endif %}</span>
+            <span class="admin-meta">{{ r.created_at }} · par {{ r.reporter_name or "compte supprimé" }}</span>
+        </div>
+        {% if r.details %}<p class="admin-details">{{ r.details }}</p>{% endif %}
+        <div class="admin-actions">
+            {% if r.target_exists %}
+            <form method="POST" action="/admin/report/{{ r.id }}/remove" data-confirm="Supprimer définitivement ce {{ 'mur et tous ses blocs' if r.target_type == 'wall' else 'bloc' }} ?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-danger">Supprimer le contenu</button>
+            </form>
+            {% endif %}
+            <form method="POST" action="/admin/report/{{ r.id }}/dismiss">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-secondary">{{ 'Ignorer le signalement' if r.target_exists else 'Classer' }}</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p class="admin-stats">Aucun signalement en attente.</p>
+    {% endfor %}
+
+    {% if handled_reports %}
+    <h2>Derniers signalements traités</h2>
+    <div class="table-scroll">
+    <table class="admin-table">
+        <tr><th>Date</th><th>Contenu</th><th>Motif</th><th>Résultat</th></tr>
+        {% for r in handled_reports %}
+        <tr>
+            <td>{{ r.created_at }}</td>
+            <td>{{ 'mur' if r.target_type == 'wall' else 'bloc' }} « {{ r.target_name }} »</td>
+            <td>{{ report_reasons.get(r.reason, r.reason) }}</td>
+            <td><span class="status-tag">{{ status_labels.get(r.status, r.status) }}</span></td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% endif %}
+
+    <h2>Comptes</h2>
+    <form method="GET" action="/admin" class="admin-search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Chercher un pseudo ou un email" maxlength="60">
+        <button type="submit" class="btn-secondary">Chercher</button>
+    </form>
+    <div class="table-scroll">
+    <table class="admin-table">
+        <tr><th>Pseudo</th><th>Email</th><th>Rôle</th><th>Murs</th><th>Blocs</th><th></th></tr>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.name }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ 'admin' if u.role == 'admin' else 'utilisateur' }}</td>
+            <td>{{ u.wall_count }}</td>
+            <td>{{ u.block_count }}</td>
+            <td class="admin-actions">
+                {% if u.id != session.user_id %}
+                <form method="POST" action="/admin/user/{{ u.id }}/role">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="role" value="{{ 'user' if u.role == 'admin' else 'admin' }}">
+                    <button type="submit" class="btn-secondary">{{ 'Retirer admin' if u.role == 'admin' else 'Nommer admin' }}</button>
+                </form>
+                <form method="POST" action="/admin/user/{{ u.id }}/delete" data-confirm="Supprimer le compte « {{ u.name }} » et TOUTES ses données (y compris ses murs et salles publics) ?">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger">Supprimer</button>
+                </form>
+                {% else %}<span class="admin-meta">(vous)</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    {% if users|length >= 100 %}<p class="admin-meta">Seuls les 100 premiers résultats sont affichés : utilisez la recherche.</p>{% endif %}
+
+    <h2>Journal des actions d'administration</h2>
+    {% if admin_logs %}
+    <div class="table-scroll"><table class="admin-table">
+        <tr><th>Date (UTC)</th><th>Administrateur</th><th>Action</th><th>Cible</th><th>Détails</th></tr>
+        {% for l in admin_logs %}
+        <tr><td>{{ l.created_at }}</td><td>{{ l.admin_name }}</td><td>{{ l.action }}</td><td>{{ l.target or '' }}</td><td>{{ l.details or '' }}</td></tr>
+        {% endfor %}
+    </table></div>
+    <p class="admin-meta">Les 60 dernières actions, conservées 1 an.</p>
+    {% else %}<p class="admin-stats">Aucune action enregistrée.</p>{% endif %}
+</div>
+{% endblock %}

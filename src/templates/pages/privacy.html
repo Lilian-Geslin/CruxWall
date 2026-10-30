@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="legal-page">
+    <h1>Politique de confidentialité</h1>
+    <p class="legal-updated">Dernière mise à jour : {{ legal.updated }}</p>
+
+    <p>Cette page explique quelles données personnelles CruxWall conserve, pourquoi, combien de temps, et comment exercer vos droits.</p>
+
+    <h2>Responsable du traitement</h2>
+    <p>
+        {% if legal.publisher %}{{ legal.publisher }}{% else %}<span class="legal-missing">[À renseigner : variable LEGAL_PUBLISHER_NAME]</span>{% endif %}
+        — contact :
+        {% if legal.email %}<a href="mailto:{{ legal.email }}">{{ legal.email }}</a>{% else %}<span class="legal-missing">[À renseigner : variable LEGAL_CONTACT_EMAIL]</span>{% endif %}
+    </p>
+
+    <h2>Données conservées</h2>
+    <ul>
+        <li><strong>Compte</strong> : pseudo, adresse email, mot de passe (conservé uniquement sous forme chiffrée irréversible), date d'acceptation des conditions d'utilisation.</li>
+        <li><strong>Contenus que vous publiez</strong> : photos de murs, salles, blocs, ascensions cochées, cotations proposées.</li>
+        <li><strong>Notifications</strong> internes au site (par exemple l'avertissement avant la suppression d'un mur inactif).</li>
+        <li><strong>Favoris, blocs « à faire » et carnet</strong> : les murs et salles que vous mettez en favoris, les blocs que vous voulez faire, et votre carnet de progression (blocs réussis, avec leur date, conservés même si le bloc, le mur ou la salle est supprimé ensuite ; visibles par vous seul).</li>
+        <li><strong>Signalements</strong> que vous envoyez (contenu signalé, motif, précisions).</li>
+        <li><strong>Données techniques</strong> : votre adresse IP est enregistrée temporairement (24 heures au plus) pour limiter les tentatives de connexion abusives. L'hébergeur peut en outre tenir ses propres journaux de connexion.</li>
+    </ul>
+
+    <h2>Ce qui est visible par les autres</h2>
+    <p>Votre <strong>pseudo</strong> est public : il apparaît sur les murs, blocs, ascensions et cotations que vous créez. Votre <strong>adresse email n'est jamais affichée</strong> aux autres utilisateurs. Les murs et salles « privés » ne sont visibles qu'avec leur code d'accès.</p>
+
+    <h2>Pourquoi ces données</h2>
+    <ul>
+        <li>Fournir le service (compte, publication de blocs, ascensions, cotations) : exécution des conditions d'utilisation que vous acceptez en vous inscrivant.</li>
+        <li>Sécurité du site (limitation des abus, modération) : intérêt légitime de l'éditeur.</li>
+    </ul>
+
+    <h2>Cookies</h2>
+    <p>CruxWall utilise un seul cookie, strictement nécessaire : le cookie de session qui vous garde connecté (durée : 30 jours, illisible par les scripts). Il n'y a ni publicité, ni outil de mesure d'audience, ni cookie de tiers. Les polices de caractères sont hébergées sur le site lui-même : aucune adresse IP n'est transmise à Google.</p>
+
+    <h2>Destinataires et transferts</h2>
+    <ul>
+        <li><strong>Hébergeur</strong> : {{ legal.host }}.</li>
+        <li><strong>Détection automatique des prises</strong> : lorsque vous ouvrez l'éditeur de blocs et que la détection est active, la photo du mur peut être envoyée au service Roboflow (États-Unis) pour repérer les prises. Seule la photo est transmise, sans votre pseudo ni votre email. Le résultat est conservé sur CruxWall pour ne pas relancer l'analyse. La détection ne s'exécute que lorsque vous ouvrez l'éditeur d'un mur dont le résultat n'est pas déjà en mémoire. Évitez d'envoyer des photos où des personnes sont reconnaissables.</li>
+        <li>Aucune donnée n'est vendue ni utilisée à des fins publicitaires.</li>
+    </ul>
+
+    <h2>Durées de conservation</h2>
+    <ul>
+        <li>Compte et contenus : jusqu'à la suppression de votre compte.</li>
+        <li>Murs : un mur sans aucune consultation ni ajout pendant 6 mois est supprimé automatiquement (le créateur en est averti une semaine avant, dans ses notifications).</li>
+        <li>Sauvegardes de sécurité : les copies de la base sont conservées 14 jours, celles des photos environ 2 semaines. Une donnée supprimée peut donc subsister dans une sauvegarde pendant ce délai, avant de disparaître.</li>
+        <li>Adresses IP des limiteurs anti-abus : 24 heures.</li>
+        <li>Journal d'administration (qui a supprimé ou modifié quoi, avec le pseudo de l'administrateur) : 1 an.</li>
+    </ul>
+
+    <h2>Vos droits</h2>
+    <p>Vous pouvez à tout moment :</p>
+    <ul>
+        <li><strong>Accéder à vos données et les récupérer</strong> : bouton « Télécharger mes données » sur votre page de profil (fichier lisible, format JSON).</li>
+        <li><strong>Supprimer votre compte et vos données</strong> : bouton « Supprimer mon compte » sur votre page de profil.</li>
+        <li><strong>Modifier</strong> votre pseudo, votre email et votre mot de passe : page « Modifier pseudo, email, mot de passe » de votre profil.</li>
+        <li><strong>Vous opposer</strong> à un traitement ou faire rectifier une autre information : en écrivant à l'adresse de contact ci-dessus.</li>
+    </ul>
+    <p>Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" rel="noopener">www.cnil.fr</a>).</p>
+
+    <h2>Photos et droit à l'image</h2>
+    <p>Ne publiez pas de photo où une personne est reconnaissable sans son accord. Si vous figurez sur une photo publiée sur CruxWall et souhaitez son retrait, utilisez le bouton « Signaler » (motif « Personne reconnaissable ») ou écrivez à l'adresse de contact : le contenu sera examiné rapidement.</p>
+</article>
+{% endblock %}

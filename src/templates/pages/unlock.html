@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>🔒 {{ kind|capitalize }} privé{{ 'e' if kind == 'salle' }}</h2>
+        <p class="unlock-name">« {{ name }} »</p>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        {% if session.user_id %}
+        <p class="unlock-text">
+            {% if kind == 'salle' %}Les murs de cette salle sont cachés.{% else %}Ce mur est caché.{% endif %}
+            Entrez le code d'accès donné par son créateur pour {{ 'les' if kind == 'salle' else 'le' }} voir.
+        </p>
+        <form method="POST" action="{{ action }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>Code d'accès</label>
+                <input type="text" name="code" required maxlength="16" placeholder="Ex : K7M2QX9H4P" autocomplete="off" autocapitalize="characters" spellcheck="false" style="text-transform:uppercase;">
+            </div>
+            <button type="submit" class="btn-primary btn-full">Débloquer</button>
+        </form>
+        {% else %}
+        <p class="unlock-text">Connectez-vous pour entrer un code d'accès.</p>
+        <a href="/login?redirect={{ request.path }}" class="btn-primary btn-full">Se connecter</a>
+        {% endif %}
+        <p class="auth-switch"><a href="/">← Retour</a></p>
+    </div>
+</div>
+{% endblock %}

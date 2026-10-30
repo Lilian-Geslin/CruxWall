@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <h2>Modifier le mur</h2>
+        {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+        <form method="POST" action="/wall/{{ wall.id }}/edit">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>Nom du mur *</label>
+                <input type="text" name="name" required maxlength="100" value="{{ wall.name }}">
+            </div>
+            <div class="form-group">
+                <label>Salle *</label>
+                {% if gyms %}
+                <select name="gym_id" required>
+                    <option value="" disabled {% if not wall.gym_id %}selected{% endif %}>-- Choisir une salle --</option>
+                    {% for gym in gyms %}
+                    <option value="{{ gym.id }}" {% if wall.gym_id == gym.id %}selected{% endif %}>{{ gym.name }}{% if gym.location %} ({{ gym.location }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+                {% if not wall.gym_id %}
+                <small class="form-hint">Ce mur a été créé avant que la salle soit obligatoire — choisissez-en une pour enregistrer.</small>
+                {% endif %}
+                {% else %}
+                <p class="form-error">Aucune salle n'existe encore. <a href="/gyms">Créez-en une d'abord →</a></p>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_private" value="1" {% if wall.is_private %}checked{% endif %}>
+                    Mur privé (accessible uniquement avec un code)
+                </label>
+                {% if wall.is_private and wall.access_code %}
+                <p class="access-code-box">Code actuel : <strong>{{ wall.access_code }}</strong></p>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="regenerate_code" value="1"> Générer un nouveau code
+                </label>
+                <small class="form-hint">Les personnes déjà débloquées gardent leur accès.</small>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn-primary btn-full">Enregistrer</button>
+        </form>
+        <p class="auth-switch"><a href="/wall/{{ wall.id }}">← Annuler</a></p>
+    </div>
+</div>
+{% endblock %}

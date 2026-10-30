@@ -1,0 +1,21 @@
+/* =============================================
+   ADMINISTRATION
+   ============================================= */
+.admin-page { max-width: 1000px; margin: 0 auto; padding: 32px 20px 20px; }
+.admin-page h1 { font-family: var(--font-display); font-size: 40px; letter-spacing: 1px; margin-bottom: 4px; }
+.admin-page h2 { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; margin: 32px 0 12px; }
+.admin-stats { color: var(--text-muted); font-size: 14px; }
+.admin-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+.admin-card-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; }
+.admin-reason { font-weight: 700; color: #eab308; }
+.admin-meta { color: var(--text-muted); font-size: 12px; }
+.admin-details { margin: 8px 0; color: #ddd; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
+.admin-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.admin-actions form { margin: 0; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.admin-table th, .admin-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.admin-table th { color: var(--text-muted); font-weight: 500; font-size: 12px; }
+.admin-search { display: flex; gap: 8px; margin-bottom: 12px; }
+.admin-search input { padding: 8px 10px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-family: var(--font-body); }
+.status-tag { font-size: 12px; padding: 1px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--text-muted); }
+.table-scroll { overflow-x: auto; }

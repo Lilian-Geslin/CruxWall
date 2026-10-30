@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="editor-layout">
+
+    <!-- PANNEAU GAUCHE : Canvas interactif -->
+    <div class="editor-canvas-panel">
+        <a href="/wall/{{ wall.id }}" class="back-link">← Retour au mur</a>
+        <div class="editor-toolbar">
+            <button class="tool-btn active" id="toolStart" data-type="start">
+                <span class="tool-dot start"></span> Départ
+            </button>
+            <button class="tool-btn" id="toolMid" data-type="mid">
+                <span class="tool-dot mid"></span> Prise
+            </button>
+            <button class="tool-btn" id="toolTop" data-type="top">
+                <span class="tool-dot top"></span> Top
+            </button>
+            <button class="tool-btn" id="toolFoot" data-type="foot">
+                <span class="tool-dot foot"></span> Pied uniquement
+            </button>
+            <button class="tool-btn tool-btn-erase" id="toolErase" data-type="erase">
+                ✕ Effacer
+            </button>
+            <button class="tool-btn tool-btn-undo" id="toolUndo" data-type="undo">
+                ↩ Annuler
+            </button>
+            <div class="zoom-controls">
+                <button type="button" class="tool-btn zoom-btn" id="zoomOut" title="Dézoomer">−</button>
+                <span id="zoomLevelLabel" class="zoom-level-label">100%</span>
+                <button type="button" class="tool-btn zoom-btn" id="zoomIn" title="Zoomer">+</button>
+                <button type="button" class="tool-btn zoom-btn" id="zoomReset" title="Réinitialiser le zoom">⟲</button>
+            </div>
+        </div>
+
+        <!-- Le viewport défile (pan) quand l'image est zoomée ; lui seul
+             capte le pincement à deux doigts, le reste de la page ne bouge pas -->
+        <div class="canvas-viewport" id="canvasViewport">
+            <div class="canvas-wrapper" id="canvasWrapper">
+                <img src="{{ image_url(wall.image_filename) }}"
+                     alt="{{ wall.name }}" id="editorImage" class="editor-image">
+                <canvas id="editorCanvas" class="editor-canvas"></canvas>
+            </div>
+
+            <!-- Overlay de chargement IA -->
+            <div id="aiOverlay" class="ai-overlay" style="display:none;">
+                <div class="ai-spinner"></div>
+                <p class="ai-overlay-text">Détection des prises en cours…</p>
+            </div>
+        </div>
+
+        <!-- Statut IA + légende -->
+        <div class="editor-footer">
+            <p id="aiStatus" class="ai-status">Initialisation…</p>
+            <div class="ai-controls">
+                <button id="btnRetryAi" type="button" class="btn-link-small">🔄 Refaire la détection</button>
+                <button id="btnToggleAi" type="button" class="btn-link-small">
+                    🚫 Désactiver la détection des prises
+                </button>
+            </div>
+            <div class="holds-legend">
+                <span><span class="tool-dot start"></span> Départ</span>
+                <span><span class="tool-dot mid"></span> Prise</span>
+                <span><span class="tool-dot top"></span> Top</span>
+                <span><span class="tool-dot foot"></span> Prise pied uniquement</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANNEAU DROIT : Formulaire du bloc -->
+    <div class="editor-form-panel">
+        <h1 class="editor-title">Nouveau bloc</h1>
+        <p class="editor-wall-name">Mur : <strong>{{ wall.name }}</strong></p>
+
+        <div class="holds-counter">
+            <span id="holdsCount">0</span> prise(s) sélectionnée(s)
+        </div>
+
+        <div class="form-group">
+            <label>Nom du bloc *</label>
+            <input type="text" id="blockName" placeholder="Ex: La traversée du diable" maxlength="100">
+        </div>
+
+        <div class="form-group">
+            <label>Cotation</label>
+            <select id="blockGrade">
+                <option value="">-- Non définie --</option>
+                {% for g in grades %}
+                <option value="{{ g }}">{{ g }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Couleur du bloc</label>
+            <div class="color-picker">
+                {% set colors = [
+                    ('#eab308','Jaune'), ('#22c55e','Vert'), ('#3b82f6','Bleu'),
+                    ('#8b5cf6','Violet'), ('#ef4444','Rouge'), ('#ffffff','Blanc'),
+                    ('#111827','Noir')
+                ] %}
+                {% for hex, name in colors %}
+                <label class="color-opt" title="{{ name }}">
+                    <input type="radio" name="blockColor" value="{{ hex }}" {% if loop.first %}checked{% endif %}>
+                    <span class="color-swatch" style="background:{{ hex }}"></span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Description (optionnel)</label>
+            <textarea id="blockDescription" placeholder="Conseil, beta, ambiance..." rows="3" maxlength="500"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Lien (optionnel)</label>
+            <input type="url" id="blockLink" placeholder="https://… (vidéo, beta)" maxlength="300" inputmode="url" autocomplete="off">
+        </div>
+
+        <div id="formError" class="form-error" style="display:none;"></div>
+
+        <button id="saveBlock" class="btn-primary btn-save">
+            Enregistrer le bloc →
+        </button>
+        <a href="/wall/{{ wall.id }}" class="btn-cancel">Annuler</a>
+    </div>
+</div>
+
+<script nonce="{{ csp_nonce }}">
+    window.WALL_ID   = {{ wall.id }};
+    window.SAVE_URL  = "/api/block/save";
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pages/editor.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,200 @@
+/* =============================================
+   SALLES, CONFIDENTIALITÉ, CODES D'ACCÈS
+   ============================================= */
+
+.section-link {
+    float: right;
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0;
+    color: var(--accent);
+    margin-top: 10px;
+}
+.section-link:hover { text-decoration: underline; }
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--accent);
+}
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.gym-private-check { font-size: 13px; color: var(--text-muted); }
+
+.access-code-box {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: var(--bg2);
+    border: 1px dashed var(--accent);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.access-code-box strong {
+    color: var(--accent);
+    letter-spacing: 2px;
+    font-size: 15px;
+}
+
+.title-code-line {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.access-code-inline {
+    margin-top: 0;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+.wall-meta-line {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+.wall-meta-line a { color: var(--accent); }
+
+.btn-secondary {
+    display: inline-block;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-small-link { padding: 5px 10px; font-size: 12px; }
+
+.unlock-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+.unlock-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.gym-form-inline { margin-bottom: 20px; }
+.gym-form-inline summary {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.gym-form .checkbox-label { align-self: center; }
+
+.gyms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+.gym-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.2s;
+}
+.gym-card:hover { border-color: var(--accent); }
+.gym-card-main { display: block; }
+.gym-card-main h3 { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+.gym-card-loc { font-size: 13px; color: var(--accent); }
+.gym-card-count { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.gym-card-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+}
+
+.gym-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+.wall-gym a { color: inherit; }
+.wall-gym a:hover { text-decoration: underline; }
+
+.quick-gym-details {
+    margin-top: 10px;
+}
+.quick-gym-details summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+}
+.quick-gym-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+.quick-gym-form input[type="text"] {
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+}
+.quick-gym-message {
+    font-size: 12px;
+    margin: 0;
+}
+.quick-gym-success { color: var(--green); }
+.quick-gym-error { color: var(--red); }
+
+
+/* Déconnexion : un formulaire POST (protégé CSRF), présenté comme un lien */
+.logout-form { margin: 0; display: flex; align-items: center; }
+.header-nav button.nav-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+
+/* Champ piège anti-robots (inscription) : invisible pour un humain */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+}

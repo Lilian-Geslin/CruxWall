@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="walls-section">
+    {% include "partials/_mytabs.html" %}
+    <h2 class="section-title">Carnet de progression</h2>
+    {% if total == 0 %}
+    <p class="profil-empty">Votre carnet est vide. Cochez « Fait » ou « Flash » sur un bloc pour le remplir.</p>
+    {% else %}
+    <div class="logbook-stats">
+        <div class="profil-stat"><span class="profil-stat-value">{{ total }}</span><span class="profil-stat-label">Blocs réussis</span></div>
+        <div class="profil-stat"><span class="profil-stat-value">{{ flashes }}</span><span class="profil-stat-label">Flash ({{ flash_pct }} %)</span></div>
+        <div class="profil-stat"><span class="profil-stat-value">{{ hardest.grade if hardest else '–' }}</span><span class="profil-stat-label">Plus dur réussi</span></div>
+        <div class="profil-stat"><span class="profil-stat-value">{{ hardest_flash.grade if hardest_flash else '–' }}</span><span class="profil-stat-label">Plus dur en flash</span></div>
+        <div class="profil-stat"><span class="profil-stat-value">{{ walls_count }}</span><span class="profil-stat-label">Murs différents</span></div>
+    </div>
+
+    <h3 class="detail-section-title">Par cotation</h3>
+    <div class="bar-chart">
+        {% for g in by_grade %}
+        <div class="bar-row"><span class="bar-label">{{ g.grade }}</span>
+            <span class="bar-track"><span class="bar-fill" style="width: {{ g.pct }}%"></span></span>
+            <span class="bar-count">{{ g.count }}</span></div>
+        {% endfor %}
+    </div>
+
+    <h3 class="detail-section-title">12 derniers mois</h3>
+    <div class="month-chart">
+        {% for m in by_month %}
+        <div class="month-col" title="{{ m.label }} : {{ m.count }}">
+            <span class="month-count">{{ m.count if m.count else '' }}</span>
+            <span class="month-bar" style="height: {{ m.pct }}%"></span>
+            <span class="month-label">{{ m.label }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p class="form-hint">Votre carnet ne change pas quand un bloc, un mur ou une salle est supprimé(e) : les réussites déjà faites restent comptées.</p>
+    <h3 class="detail-section-title">Journal</h3>
+    {% for month, items in journal.items() %}
+    <h4 class="journal-month">{{ month }}</h4>
+    <div class="fav-list">
+        {% for e in items %}
+        <div class="fav-row">
+            <span class="admin-meta">{{ (e.day or '')[:10] }}</span>
+            {% if e.linkable %}<span class="color-badge" style="background: {{ e.color or '#3b82f6' }}"></span>
+            <a href="/block/{{ e.block_id }}">{{ e.name }}</a>{% else %}<span>{{ e.name }}</span>{% endif %}
+            {% if e.grade %}<span class="grade-badge">{{ e.grade }}</span>{% endif %}
+            <span class="admin-meta">{{ e.wall_name }}</span>
+            {% if e.flash %}<span class="admin-meta">⚡ flash</span>{% endif %}
+            {% if not e.exists_now %}<span class="admin-meta">(bloc supprimé)</span>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</section>
+{% endblock %}
