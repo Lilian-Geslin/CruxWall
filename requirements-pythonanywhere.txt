@@ -3,12 +3,12 @@
 # La détection IA s'appuiera sur Roboflow (en ligne) quand disponible ;
 # sinon, placement manuel des prises (toujours fonctionnel, voir editor.js).
 #
-# Versions épinglées (testées ensemble, sans faille connue au 9 oct. 2026).
+# Versions épinglées (testées ensemble, sans faille connue au 31 oct. 2026).
 # Mise à jour : voir la section "Mettre à jour les dépendances" du README.
 Flask==3.1.3
 Werkzeug==3.1.9
 python-dotenv==1.2.4
-Pillow==12.3.0
+Pillow==13.0.0
 Jinja2==3.1.6
 MarkupSafe==3.0.4
 itsdangerous==2.2.0
